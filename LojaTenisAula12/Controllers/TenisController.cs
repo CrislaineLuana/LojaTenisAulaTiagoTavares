@@ -1,14 +1,12 @@
-using LojaTenisAula12.Models;
-using LojaTenisAula12.Services;
+﻿using LojaTenisAula12.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace LojaTenisAula12.Controllers
 {
-    public class HomeController : Controller
+    public class TenisController : Controller
     {
         private readonly ITenisInterface _tenisInterface;
-        public HomeController(ITenisInterface tenisInterface)
+        public TenisController(ITenisInterface tenisInterface)
         {
             _tenisInterface = tenisInterface;
         }
@@ -19,6 +17,12 @@ namespace LojaTenisAula12.Controllers
             return View(tenis);
         }
 
-        
+        public async Task<IActionResult> Detalhes(int? id)
+        {
+            var tenis = await _tenisInterface.BuscarTenisPorId(id);
+            return View(tenis);
+        }
+
+
     }
 }
