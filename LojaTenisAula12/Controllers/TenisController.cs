@@ -1,4 +1,5 @@
-﻿using LojaTenisAula12.Services;
+﻿using LojaTenisAula12.Dto.TenisDto;
+using LojaTenisAula12.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LojaTenisAula12.Controllers
@@ -23,6 +24,29 @@ namespace LojaTenisAula12.Controllers
             return View(tenis);
         }
 
+        public IActionResult Cadastrar()
+        {
+            return View();
+        }
 
+
+        [HttpPost]
+        public async Task<IActionResult> Cadastrar(CriarTenisDto criarTenisDto, IFormFile foto)
+        {
+            if (ModelState.IsValid)
+            {
+                var tenis = await _tenisInterface.Cadastrar(criarTenisDto, foto);
+
+                TempData["MensagemSucesso"] = "Tenis cadastrado com sucesso!";
+
+                return RedirectToAction("Index", "Tenis");
+            }
+            else
+            {
+
+                TempData["MensagemErro"] = "Ocorreu um erro ao cadastrar o tenis!";
+                return View(criarTenisDto);
+            }
+        }
     }
 }
