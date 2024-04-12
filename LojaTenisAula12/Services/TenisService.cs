@@ -30,6 +30,22 @@ namespace LojaTenisAula12.Services
             }
         }
 
+        public async Task<List<TenisModel>> BuscarTenisFiltro(string? pesquisar)
+        {
+            try
+            {
+
+                var tenis = await _context.Tenis.Where(t => t.Nome.Contains(pesquisar) || 
+                                                            t.Marca.Contains(pesquisar)).ToListAsync();
+                return tenis;
+
+
+            }catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<TenisModel> BuscarTenisPorId(int? id)
         {
             try
@@ -67,6 +83,50 @@ namespace LojaTenisAula12.Services
 
             }
             catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<TenisModel> Editar(TenisModel tenisModel, IFormFile? foto)
+        {
+            try
+            {
+                var tenis = await _context.Tenis.FirstOrDefaultAsync(tenisBanco => tenisBanco.Id == tenisModel.Id);
+
+
+                var nomeCaminhoImagem = "";
+
+                if (foto != null)
+                {
+                    string caminhoCapaExistente = _sistema + "\\imagem\\" + tenis.Foto;
+
+                    if (File.Exists(caminhoCapaExistente))
+                    {
+                        File.Delete(caminhoCapaExistente);
+                    }
+
+                    nomeCaminhoImagem = GerarCaminhoArquivo(foto);
+
+                }
+
+                tenis.Nome = tenisModel.Nome;
+                tenis.Marca = tenisModel.Marca;
+                tenis.Valor = tenisModel.Valor;
+
+                if(nomeCaminhoImagem != "")
+                {
+                    tenis.Foto = nomeCaminhoImagem;
+                }
+
+
+                _context.Update(tenis);
+                await _context.SaveChangesAsync();
+
+                return tenis;
+
+
+            }catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
